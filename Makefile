@@ -22,7 +22,7 @@ OFILES = $(IFILES:$(IDIR)/%.c=$(ODIR)/%.o)
 all: $(MAIN)
 
 test: $(MAIN)
-	@./$(MAIN)
+	@./$(MAIN) --pussy
 
 clean:
 	@rm -rf $(ODIR)

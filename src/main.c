@@ -1,4 +1,5 @@
 #include "main.h"
+#include <getopt.h>
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +16,12 @@
 #define SYM_UNKNOWN  '?'
 #define SYM_UNTURNED '#'
 
+char mode_system   = 0;
+char mode_initonly = 0;
+char mode_nokill   = 0;
+
 int main(int argc, char **argv) {
+	parse_cli(argc, argv);
 	init();
 
 	int cur_x = 0;
@@ -69,8 +75,8 @@ int main(int argc, char **argv) {
 				attroff(col);
 			}
 		}
-
 		refresh();
+
 		tile_t tile;
 		switch (getch()) {
 		case 'q':
@@ -107,10 +113,19 @@ int main(int argc, char **argv) {
 				}
 				erase();
 				int col = util_color_get(COLOR_RED, COLOR_BLACK);
+				char *msg;
+				if (mode_nokill) {
+					msg = "(Pretending)";
+				} else {
+					msg = "Too bad!";
+				}
 				attron(col);
-				mvprintw(board.height + 1, 2, "Too bad!");
+				mvprintw(board.height + 1, 2, msg);
 				mvprintw(board.height + 2, 2, "Killing %d, %s", proc->tgid, cmd);
 				attroff(col);
+				if (!mode_nokill) {
+					//proc_kill(proc);
+				}
 			}
 			break;
 		}
@@ -119,6 +134,37 @@ int main(int argc, char **argv) {
 	board_destroy(&board);
 	cleanup();
 	return 0;
+}
+
+void parse_cli(int argc, char **argv) {
+	static struct option long_options[] = {
+		{"hardcore", no_argument, 0, 'h'},
+		{"pussy",    no_argument, 0, 'p'},
+		{"system",   no_argument, 0, 's'},
+	};
+	int index = 0;
+	int c;
+	while ((c = getopt_long(argc, argv, "hps", long_options, &index)) != -1) {
+		switch (c) {
+		case 'h':
+			mode_initonly = 1;
+			if (geteuid() != 0) {
+				printf("The --hardcore option requires root priviliges!\n");
+				exit(1);
+			}
+			break;
+		case 'p':
+			mode_nokill = 1;
+			break;
+		case 's':
+			mode_system = 1;
+			if (geteuid() != 0) {
+				printf("The --system option requires root priviliges!\n");
+				exit(1);
+			}
+			break;
+		}
+	}
 }
 
 void init(void) {
@@ -143,5 +189,11 @@ void cleanup(void) {
 }
 
 char procfilter(proc_t *proc) {
-	return 1;
+	if (mode_system) {
+		return 1;
+	}
+	if (mode_initonly) {
+		return proc->tgid == 1;
+	}
+	return proc->euid == geteuid();
 }

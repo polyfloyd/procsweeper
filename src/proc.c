@@ -1,7 +1,9 @@
 #include "proc.h"
+#define __USE_POSIX
+#include <signal.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 proc_t **proclist;
 int      proclist_length = 0;
@@ -39,6 +41,5 @@ proc_t *proc_get_random(void) {
 }
 
 int proc_kill(proc_t *proc) {
-	// TODO
-	return 0;
+	return kill(proc->tgid, SIGINT);
 }
