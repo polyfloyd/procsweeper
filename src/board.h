@@ -3,7 +3,6 @@
 
 typedef enum {
 	TILE_EMPTY,
-	TILE_FLAG,
 	TILE_MINE_TURNED,
 	TILE_MINE_UNTURNED,
 	TILE_UNTURNED,
@@ -26,5 +25,6 @@ tile_t board_turn_tiles(board_t *board, int x, int y);
 int    board_get_adjacent_mine_count(board_t *board, int x, int y);
 void   board_toggle_flagged(board_t *board, int x, int y);
 char   board_is_flagged(board_t *board, int x, int y);
+void   board_set_flagged(board_t *board, int x, int y, char flagged);
 
 #endif

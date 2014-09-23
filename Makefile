@@ -6,9 +6,12 @@ ODIR = bin
 CC = clang
 
 LIB = \
-	-lncurses
+	-lncurses \
+	-lprocps
 
 CFLAGS = \
+	-O0 \
+	-g3 \
 	-std=c11
 
 IFILES = $(wildcard $(IDIR)/*.c)

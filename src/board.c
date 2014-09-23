@@ -1,13 +1,12 @@
 #include "board.h"
 #include <stdlib.h>
-#include <time.h>
 
 void board_init(board_t *board, int w, int h, int mines) {
 	board->width  = w;
 	board->height = h;
 	board->mines  = mines;
-	board->flags  = malloc(sizeof(char) * w * h);
-	board->tiles  = malloc(sizeof(tile_t) * w * h);
+	board->flags  = calloc(w * h, sizeof(char));
+	board->tiles  = calloc(w * h, sizeof(tile_t));
 	for (int x = 0; x < board->width; x++) {
 		for (int y = 0; y < board->height; y++) {
 			board_set_tile(board, x, y, TILE_UNTURNED);
@@ -43,16 +42,19 @@ int board_get_adjacent_mine_count(board_t *board, int x, int y) {
 };
 
 void board_toggle_flagged(board_t *board, int x, int y) {
-	board->flags[y * board->width + x] = !board_is_flagged(board, x, y);
+	board_set_flagged(board, x, y, !board_is_flagged(board, x, y));
 }
 
 char board_is_flagged(board_t *board, int x, int y) {
 	return board->flags[y * board->width + x];
 }
 
+void board_set_flagged(board_t *board, int x, int y, char flagged) {
+	board->flags[y * board->width + x] = flagged;
+}
+
 tile_t board_turn_tiles(board_t *board, int x, int y) {
 	if (!board->seeded) {
-		srand(time(NULL));
 		for (int i = 0; i < board->mines; i++) {
 			int mx, my;
 			do {
