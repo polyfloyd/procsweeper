@@ -1,4 +1,3 @@
-#include "main.h"
 #include <getopt.h>
 #include <ncurses.h>
 #include <stdio.h>
@@ -19,6 +18,11 @@
 char mode_system   = 0;
 char mode_initonly = 0;
 char mode_nokill   = 0;
+
+void parse_cli(int argc, char **argv);
+void init(void);
+void cleanup(void);
+char procfilter(proc_t *proc);
 
 int main(int argc, char **argv) {
 	parse_cli(argc, argv);
