@@ -1,5 +1,6 @@
 #include <getopt.h>
 #include <ncurses.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -15,9 +16,10 @@
 #define SYM_UNKNOWN  '?'
 #define SYM_UNTURNED '#'
 
-char mode_system   = 0;
 char mode_initonly = 0;
 char mode_nokill   = 0;
+char mode_system   = 0;
+int  kill_signal   = SIGINT;
 
 void parse_cli(int argc, char **argv);
 void init(void);
@@ -128,7 +130,7 @@ int main(int argc, char **argv) {
 				mvprintw(board.height + 2, 2, "Killing %d, %s", proc->tgid, cmd);
 				attroff(col);
 				if (!mode_nokill) {
-					//proc_kill(proc);
+					proc_kill(proc, kill_signal);
 				}
 			}
 			break;
@@ -144,11 +146,12 @@ void parse_cli(int argc, char **argv) {
 	static struct option long_options[] = {
 		{"hardcore", no_argument, 0, 'h'},
 		{"pussy",    no_argument, 0, 'p'},
+		{"sigkill",  no_argument, 0, 'k'},
 		{"system",   no_argument, 0, 's'},
 	};
 	int index = 0;
 	int c;
-	while ((c = getopt_long(argc, argv, "hps", long_options, &index)) != -1) {
+	while ((c = getopt_long(argc, argv, "hpks", long_options, &index)) != -1) {
 		switch (c) {
 		case 'h':
 			mode_initonly = 1;
@@ -159,6 +162,9 @@ void parse_cli(int argc, char **argv) {
 			break;
 		case 'p':
 			mode_nokill = 1;
+			break;
+		case 'k':
+			kill_signal = SIGKILL;
 			break;
 		case 's':
 			mode_system = 1;

@@ -40,6 +40,6 @@ proc_t *proc_get_random(void) {
 	return proc;
 }
 
-int proc_kill(proc_t *proc) {
-	return kill(proc->tgid, SIGINT);
+int proc_kill(proc_t *proc, int sign) {
+	return kill(proc->tgid, sign);
 }

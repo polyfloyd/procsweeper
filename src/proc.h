@@ -12,6 +12,6 @@ void    proc_init(void);
 void    proc_cleanup(void);
 void    proc_setfilter(proclist_filter_func);
 proc_t *proc_get_random(void);
-int     proc_kill(proc_t *proc);
+int     proc_kill(proc_t *proc, int sign);
 
 #endif
