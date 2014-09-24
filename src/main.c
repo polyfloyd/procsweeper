@@ -81,6 +81,19 @@ int main(int argc, char **argv) {
 				attroff(col);
 			}
 		}
+
+		color_t col_ok  = util_color_get(COLOR_GREEN, COLOR_BLACK);
+		color_t col_bad = util_color_get(COLOR_RED, COLOR_BLACK);
+		int row = 1;
+		attron(col_ok);
+		if (mode_nokill)            mvprintw(row++, board.width + 2, "pussy");
+		attroff(col_ok);
+		attron(col_bad);
+		if (mode_system)            mvprintw(row++, board.width + 2, "system");
+		if (mode_initonly)          mvprintw(row++, board.width + 2, "hardcore");
+		if (kill_signal == SIGKILL) mvprintw(row++, board.width + 2, "sigkill");
+		attroff(col_bad);
+
 		refresh();
 
 		tile_t tile;
