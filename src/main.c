@@ -124,6 +124,10 @@ int main(int argc, char **argv) {
 			tile = board_turn_tiles(&board, cur_x, cur_y);
 			if (tile == TILE_MINE_UNTURNED) {
 				proc_t *proc = proc_get_random();
+				if (!proc) {
+					mvprintw(board.height + 1, 2, "Out of processes to kill!");
+					break;
+				}
 				char *cmd;
 				if (proc->cmdline) {
 					cmd = proc->cmdline[0];
