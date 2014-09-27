@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2014 PolyFloyd
+ */
+
 #include "util.h"
 #include <ncurses.h>
 

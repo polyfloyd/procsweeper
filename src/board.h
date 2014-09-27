@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2014 PolyFloyd
+ */
+
 #ifndef __BOARD_H
 #define __BOARD_H
 

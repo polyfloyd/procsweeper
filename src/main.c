@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2014 PolyFloyd
+ */
+
 #include <getopt.h>
 #include <ncurses.h>
 #include <signal.h>

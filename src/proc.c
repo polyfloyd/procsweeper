@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2014 PolyFloyd
+ */
+
 #include "proc.h"
 #define __USE_POSIX
 #include <signal.h>

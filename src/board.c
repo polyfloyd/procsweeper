@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2014 PolyFloyd
+ */
+
 #include "board.h"
 #include <stdlib.h>
 
