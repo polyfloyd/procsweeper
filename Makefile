@@ -1,18 +1,23 @@
-MAIN = procsweeper
+NAME = procsweeper
 
 IDIR = src
 ODIR = bin
+MAIN = $(ODIR)/$(NAME)
 
 CC = clang
+LD = clang
 
-LIB = \
-	-lncurses \
-	-lprocps
+LIBS = \
+	ncurses \
+	procps
 
 CFLAGS = \
 	-O0 \
 	-g3 \
 	-std=c11
+
+LDFLAGS = \
+	$(addprefix -l, $(LIBS))
 
 IFILES = $(wildcard $(IDIR)/*.c)
 OFILES = $(IFILES:$(IDIR)/%.c=$(ODIR)/%.o)
@@ -33,5 +38,5 @@ $(ODIR)/%.o: $(IDIR)/%.c
 	@$(CC) -c -o $@ $< $(CFLAGS)
 
 $(MAIN): $(OFILES)
-	@echo "[$(CC)] $@"
-	@$(CC) -o $@ $^ $(LIB) $(CFLAGS) $(LIBS)
+	@echo "[$(LD)] $@"
+	@$(LD) -o $@ $^ $(LDFLAGS)
