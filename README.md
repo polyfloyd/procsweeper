@@ -5,7 +5,7 @@ ProcSweeper is a minesweeper-like game. The difference being that when you hit
 a mine, ProcSweeper will pick a random process from your computer and kill it.
 By default, only processes running as the executing user will be selected.
 
-![Screenshot](https://polyfloyd.net/data/file/dNcPHkDmj4gpxRT7iJ3fbQ/ProcSweeper%20Screenshot.png)
+![Screenshot](http://polyfloyd.net/data/file/dNcPHkDmj4gpxRT7iJ3fbQ/ProcSweeper%20Screenshot.png)
 
 ## Playing
 Use the HJKL keys to move around. Use the X key to clear a tile. You can flag a
