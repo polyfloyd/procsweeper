@@ -9,6 +9,7 @@ void board_init(board_t *board, int w, int h, int mines) {
 	board->width  = w;
 	board->height = h;
 	board->mines  = mines;
+	board->seeded = 0;
 	board->flags  = calloc(w * h, sizeof(char));
 	board->tiles  = calloc(w * h, sizeof(tile_t));
 	for (int x = 0; x < board->width; x++) {
