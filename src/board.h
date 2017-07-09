@@ -30,7 +30,5 @@ tile_t board_get_tile(board_t *board, int x, int y);
 tile_t board_turn_tiles(board_t *board, int x, int y);
 int    board_get_adjacent_mine_count(board_t *board, int x, int y);
 void   board_toggle_flagged(board_t *board, int x, int y);
-bool   board_is_flagged(board_t *board, int x, int y);
-void   board_set_flagged(board_t *board, int x, int y, bool flagged);
 
 #endif

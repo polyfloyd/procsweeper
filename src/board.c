@@ -46,18 +46,7 @@ int board_get_adjacent_mine_count(board_t *board, int x, int y) {
 };
 
 void board_toggle_flagged(board_t *board, int x, int y) {
-	board_set_flagged(board, x, y, !board_is_flagged(board, x, y));
-}
-
-bool board_is_flagged(board_t *board, int x, int y) {
-	return board_get_tile(board, x, y) & TILE_FLAG;
-}
-
-void board_set_flagged(board_t *board, int x, int y, bool flagged) {
-	tile_t *t = &board->tiles[y * board->width + x];
-	*t = flagged
-		? *t | TILE_FLAG
-		: *t & ~TILE_FLAG;
+	*board_tile(board, x, y) ^= TILE_FLAG;
 }
 
 tile_t board_turn_tiles(board_t *board, int x, int y) {
