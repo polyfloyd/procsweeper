@@ -28,7 +28,7 @@ make
 * -k | --sigkill
   Use `SIGKILL` instead of `SIGINT`
 
-* -p | --pussy
+* -t | --test
   ProcSweeper won't actually signal a process when you hit a mine.
 
 ## TODO
