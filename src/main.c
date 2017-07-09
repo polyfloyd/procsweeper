@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 		color_t col_bad = util_color_get(COLOR_RED, COLOR_BLACK);
 		int row = 1;
 		attron(col_ok);
-		if (mode_nokill)            mvprintw(row++, board.width + 2, "pussy");
+		if (mode_nokill)            mvprintw(row++, board.width + 2, "testing");
 		attroff(col_ok);
 		attron(col_bad);
 		if (mode_system)            mvprintw(row++, board.width + 2, "system");
@@ -166,7 +166,7 @@ int main(int argc, char **argv) {
 void parse_cli(int argc, char **argv) {
 	static struct option long_options[] = {
 		{"hardcore", no_argument, 0, 'h'},
-		{"pussy",    no_argument, 0, 'p'},
+		{"test",     no_argument, 0, 't'},
 		{"sigkill",  no_argument, 0, 'k'},
 		{"system",   no_argument, 0, 's'},
 	};
@@ -181,7 +181,7 @@ void parse_cli(int argc, char **argv) {
 				exit(1);
 			}
 			break;
-		case 'p':
+		case 't':
 			mode_nokill = 1;
 			break;
 		case 'k':
