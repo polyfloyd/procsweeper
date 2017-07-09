@@ -45,37 +45,34 @@ int main(int argc, char **argv) {
 		for (int x = 0; x < board.width; x++) {
 			for (int y = 0; y < board.height; y++) {
 				tile_t tile = board_get_tile(&board, x, y);
-				int adjmines = board_get_adjacent_mine_count(&board, x, y);
 				char sym = SYM_UNKNOWN;
 				int col_f = COLOR_WHITE;
 				int col_b = COLOR_BLACK;
-				switch (tile) {
-					case TILE_EMPTY:
-						if (adjmines > 0) {
-							if (adjmines == 1) {
-								col_f = COLOR_BLUE;
-							} else {
-								col_f = COLOR_YELLOW;
-							}
-							sym = '0' + adjmines;
+
+				if (!(tile & TILE_TURNED)) {
+					sym = SYM_UNTURNED;
+					if (tile & TILE_FLAG) {
+						col_b = COLOR_RED;
+					}
+
+				} else if (tile & TILE_MINE) {
+					sym = SYM_MINE;
+					col_f = COLOR_RED;
+
+				} else {
+					int adjmines = board_get_adjacent_mine_count(&board, x, y);
+					if (adjmines > 0) {
+						if (adjmines == 1) {
+							col_f = COLOR_BLUE;
 						} else {
-							sym = SYM_EMPTY;
+							col_f = COLOR_YELLOW;
 						}
-						break;
-					case TILE_UNTURNED:
-					case TILE_MINE_UNTURNED:
-						sym = SYM_UNTURNED;
-						break;
-					case TILE_MINE_TURNED:
-						sym = SYM_MINE;
-						col_f = COLOR_RED;
-						break;
-					default:
-						break;
+						sym = '0' + adjmines;
+					} else {
+						sym = SYM_EMPTY;
+					}
 				}
-				if (board_is_flagged(&board, x, y) && tile != TILE_MINE_TURNED) {
-					col_b = COLOR_RED;
-				}
+
 				if (x == cur_x && y == cur_y) {
 					col_b = COLOR_WHITE;
 				}
@@ -126,7 +123,7 @@ int main(int argc, char **argv) {
 			break;
 		case 'x':
 			tile = board_turn_tiles(&board, cur_x, cur_y);
-			if (tile == TILE_MINE_UNTURNED) {
+			if (tile & TILE_MINE) {
 				proc_t *proc = proc_get_random();
 				if (!proc) {
 					mvprintw(board.height + 1, 2, "Out of processes to kill!");

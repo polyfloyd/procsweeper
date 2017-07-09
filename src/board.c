@@ -3,6 +3,7 @@
  */
 
 #include "board.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 void board_init(board_t *board, int w, int h, int mines) {
@@ -10,37 +11,35 @@ void board_init(board_t *board, int w, int h, int mines) {
 	board->height = h;
 	board->mines  = mines;
 	board->seeded = 0;
-	board->flags  = calloc(w * h, sizeof(char));
 	board->tiles  = calloc(w * h, sizeof(tile_t));
-	for (int x = 0; x < board->width; x++) {
-		for (int y = 0; y < board->height; y++) {
-			board_set_tile(board, x, y, TILE_UNTURNED);
-		}
-	}
 }
 
 void board_destroy(board_t *board) {
 	free(board->tiles);
-	free(board->flags);
 }
 
-tile_t board_get_tile(board_t *board, int x, int y) {
+tile_t *board_tile(board_t *board, int x, int y) {
 	if (x < 0 || x >= board->width || y < 0 || y >= board->height) {
-		return TILE_EMPTY;
+		printf("Board position out of range: (%d, %d)", x, y);
+		exit(1);
 	}
-	return board->tiles[y * board->width + x];
+	return &board->tiles[y * board->width + x];
 };
 
-void board_set_tile(board_t *board, int x, int y, tile_t tile) {
-	board->tiles[y * board->width + x] = tile;
+tile_t board_get_tile(board_t *board, int x, int y) {
+	return *board_tile(board, x, y);
 };
 
 int board_get_adjacent_mine_count(board_t *board, int x, int y) {
 	int count = 0;
 	for (int lx = -1; lx <= 1; lx++) {
 		for (int ly = -1; ly <= 1; ly++) {
-			tile_t tile = board_get_tile(board, x + lx, y + ly);
-			if (tile == TILE_MINE_UNTURNED || tile == TILE_MINE_TURNED) count++;
+			if (x + lx < 0 || x + lx >= board->width || y + ly < 0 || y + ly >= board->height) {
+				continue;
+			}
+			if (board_get_tile(board, x + lx, y + ly) & TILE_MINE) {
+				count++;
+			}
 		}
 	}
 	return count;
@@ -50,12 +49,15 @@ void board_toggle_flagged(board_t *board, int x, int y) {
 	board_set_flagged(board, x, y, !board_is_flagged(board, x, y));
 }
 
-char board_is_flagged(board_t *board, int x, int y) {
-	return board->flags[y * board->width + x];
+bool board_is_flagged(board_t *board, int x, int y) {
+	return board_get_tile(board, x, y) & TILE_FLAG;
 }
 
-void board_set_flagged(board_t *board, int x, int y, char flagged) {
-	board->flags[y * board->width + x] = flagged;
+void board_set_flagged(board_t *board, int x, int y, bool flagged) {
+	tile_t *t = &board->tiles[y * board->width + x];
+	*t = flagged
+		? *t | TILE_FLAG
+		: *t & ~TILE_FLAG;
 }
 
 tile_t board_turn_tiles(board_t *board, int x, int y) {
@@ -65,23 +67,25 @@ tile_t board_turn_tiles(board_t *board, int x, int y) {
 			do {
 				mx = rand() % board->width;
 				my = rand() % board->height;
-			} while ((mx == x && my == y) || board_get_tile(board, x, y) == TILE_MINE_UNTURNED);
-			board_set_tile(board, mx, my, TILE_MINE_UNTURNED);
+			} while ((mx == x && my == y) || board_get_tile(board, x, y) & TILE_MINE);
+			*board_tile(board, mx, my) |= TILE_MINE;
 		}
 		board->seeded = 1;
 	}
-	tile_t tile = board_get_tile(board, x, y);
-	if (tile == TILE_UNTURNED) {
-		board_set_tile(board, x, y, TILE_EMPTY);
+
+	tile_t *tile = board_tile(board, x, y);
+	if (!(*tile & TILE_TURNED)) {
+		*tile |= TILE_TURNED;
 		for (int lx = -1; lx <= 1; lx++) {
 			for (int ly = -1; ly <= 1; ly++) {
-				if (!board_get_adjacent_mine_count(board, x, y)) {
+				if (x + lx < 0 || x + lx >= board->width || y + ly < 0 || y + ly >= board->height) {
+					continue;
+				}
+				if (board_get_adjacent_mine_count(board, x, y) == 0) {
 					board_turn_tiles(board, x + lx, y + ly);
 				}
 			}
 		}
-	} else if (tile == TILE_MINE_UNTURNED) {
-		board_set_tile(board, x, y, TILE_MINE_TURNED);
 	}
-	return tile;
+	return *tile;
 }
