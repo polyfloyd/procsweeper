@@ -74,6 +74,9 @@ int main(int argc, char **argv) {
 				}
 
 				if (x == cur_x && y == cur_y) {
+					if (col_b != COLOR_BLACK) {
+						col_f = col_b;
+					}
 					col_b = COLOR_WHITE;
 				}
 				color_t col = util_color_get(col_f, col_b);
